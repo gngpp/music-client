@@ -1,0 +1,164 @@
+<template>
+  <div class="the-header">
+    <!--图标-->
+    <div class="header-logo" @click="goHome" style="color: rgba(254,254,254,0.85)">
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#icon-erji" style="color: rgba(254,254,254,0.85)"></use>
+      </svg>
+      <span>{{musicName}}</span>
+    </div>
+    <ul class="navbar" ref="change" >
+      <li :class="{active: item.name === activeName }" style="color: #fefefe" v-for="item in navMsg" :key="item.path" @click="goPage(item.path, item.name)">
+        {{item.name}}
+      </li>
+      <li>
+        <div class="header-search">
+          <input type="text" placeholder="搜索音乐" @keyup.enter="goSearch()" v-model="keywords">
+          <div class="search-btn"  @click="goSearch()" >
+            <svg class="icon" aria-hidden="true" style="color: #fefefe">
+              <use xlink:href="#icon-sousuo"></use>
+            </svg>
+          </div>
+        </div>
+      </li>
+      <li v-if="!loginIn" style="color: #fefefe" :class="{active: item.name === activeName }" v-for="item in loginMsg" :key="item.type" @click="goPage(item.path, item.name)">{{item.name}}</li>
+    </ul>
+    <div>
+      <el-dropdown style="left: 20%">
+  <span class="el-dropdown-link">
+    续费<i class="el-icon-arrow-down el-icon--right"></i>
+  </span>
+        <el-dropdown-menu slot="dropdown" >
+          <el-button-group>
+            <el-button icon="el-icon-s-goods" size="small" plain @click="goMembership">音乐包</el-button>
+            <el-button icon="el-icon-s-claim" size="small" plai @click="goCard()">购点卡
+            </el-button>
+          </el-button-group>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
+    <!--设置-->
+    <div class="header-right" v-show="loginIn" style="left: 10px">
+      <div id="user">
+        <img :src="attachImageUrl(avatar)" alt="avatar">
+      </div>
+      <el-avatar :size="16"  style="background-color: rgba(0,0,0,0);position: absolute;left: 70px;top: 10px">
+        <img :src="getVipIconUrl(isMember)" alt="vip"/>
+      </el-avatar>
+      <ul class="menu" style="background-color: rgb(51,51,51)">
+        <li style="color: #ffffff" v-for="(item, index) in menuList" :key="index" @click="goMenuList(item.path)">{{item.name}}</li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+
+<script>
+import { mixin } from '../mixins'
+import { mapGetters } from 'vuex'
+import { navMsg, loginMsg, menuList } from '../assets/data/header'
+
+export default {
+  name: 'the-header',
+  mixins: [mixin],
+  data () {
+    return {
+      musicName: 'Music',
+      navMsg: [], // 左侧导航栏
+      loginMsg: [], // 右侧导航栏
+      menuList: [], // 用户下拉菜单项
+      keywords: null,
+      dialog: false
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'userId',
+      'activeName',
+      'avatar',
+      'isMember',
+      'username',
+      'loginIn'
+    ])
+  },
+  created () {
+    this.navMsg = navMsg
+    this.loginMsg = loginMsg
+    this.menuList = menuList
+  },
+  mounted () {
+    document.querySelector('#user').addEventListener('click', function (e) {
+      document.querySelector('.menu').classList.add('show')
+      e.stopPropagation()// 关键在于阻止冒泡
+    }, false)
+    // 点击“菜单”内部时，阻止事件冒泡。(这样点击内部时，菜单不会关闭)
+    document.querySelector('.menu').addEventListener('click', function (e) {
+      e.stopPropagation()
+    }, false)
+    document.addEventListener('click', function () {
+      document.querySelector('.menu').classList.remove('show')
+    }, false)
+  },
+  methods: {
+    goMembership () {
+      this.$router.push('/membership')
+    },
+    goCard () {
+      window.open('https://www.csfaka.com/links/808B0541','_blank') // 新窗口打开外链接
+    },
+    goHome () {
+      this.$router.go(0)
+      this.$router.push({path: '/'})
+    },
+    goPage (path, value) {
+      document.querySelector('.menu').classList.remove('show')
+      this.changeIndex(value)
+      if (!this.loginIn && path === '/my-music') {
+        this.$router.push('login-in')
+        this.$router.go(0)
+      } else {
+        this.$router.push({path: path})
+      }
+    },
+    changeIndex (value) {
+      this.$store.commit('setActiveName', value)
+    },
+    goMenuList (path) {
+      if (path === 0) {
+        this.$store.commit('setIsActive', false)
+        this.$router.push({path: '/'})
+      }
+      document.querySelector('.menu').classList.remove('show')
+      if (path) {
+        this.$router.push({path: path})
+      } else {
+        this.$store.commit('setLoginIn', false)
+        this.$store.commit('delToken')
+        this.$router.go(0)
+      }
+    },
+    goSearch () {
+      if (this.keywords === null || this.keywords === '') {
+        this.notify('请输入搜索内容', 'warning')
+        return
+      }
+      this.$store.commit('setSearchword', this.keywords)
+      this.$router.push({path: '/search', query: {keywords: this.keywords}})
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import '../assets/css/the-header.scss';
+</style>
+<style>
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #d6d4d4;
+  }
+  .el-icon-arrow-down {
+    font-size: 15px;
+    color: #ffffff;
+  }
+</style>

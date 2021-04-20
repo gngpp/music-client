@@ -1,0 +1,65 @@
+<template>
+  <div class="setting" style="background-color: rgba(156,156,156,0)">
+    <div class="leftCol">
+      <div class="settingsMainHeader" style="color: #000000">设置</div>
+      <ul class="setting-aside">
+        <li v-for="(item, index) in settingList" :key="index" :class="{activeColor: activeName === item.name}" @click="handleClick(item)">
+          {{item.name}}
+        </li>
+      </ul>
+    </div>
+    <div class="contentCol">
+      <component :is="componentSrc"></component>
+    </div>
+  </div>
+</template>
+
+<script>
+import Info from '../components/Info'
+import Upload from '../components/Upload'
+import { mapGetters } from 'vuex'
+
+export default {
+  name: 'setting',
+  components: {
+    Info,
+    Upload
+  },
+  data () {
+    return {
+      activeName: '个人信息',
+      componentSrc: 'Info',
+      settingList: [{
+        icon: '',
+        name: '个人信息',
+        path: 'Info'
+      }, {
+        icon: '',
+        name: '修改头像',
+        path: 'Upload'
+      }]
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'loginIn'
+    ])
+  },
+  created() {
+    if (!this.loginIn) {
+      this.$router.push({path: 'login-in'})
+      this.$router.go(0)
+    }
+  },
+  methods: {
+    handleClick (item) {
+      this.activeName = item.name
+      this.componentSrc = item.path
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import '../assets/css/setting.scss';
+</style>

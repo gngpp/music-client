@@ -1,0 +1,161 @@
+@import "var.scss";
+@import "global.scss";
+
+.the-header {
+  position: fixed;
+  @include layout;
+  width: 100%;
+  height: $header-height;
+  line-height: $header-height;
+  padding: $header-padding;
+  margin: $header-margin;
+  // 播放条颜色
+  //background-color: $theme-header-color;
+  background-color: rgba(0, 0, 0, 0.95);
+  @include box-shadow($box-shadow);
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.header-logo {
+  margin: $header-logo-margin;
+  font-size: $font-size-logo;
+  font-weight: bold;
+  white-space: nowrap;
+  cursor: pointer;
+  .icon {
+
+    // logo颜色
+    @include icon(($header-height / 3) * 2, $color-black);
+    vertical-align: middle;
+  }
+}
+
+/*nav*/
+.navbar {
+  height: $header-height;
+  white-space: nowrap;
+  li {
+    margin: $header-nav-margin;
+    padding: $header-nav-padding;
+    font-size: $font-size-header;
+    // 没点击时的按钮亮度
+    // color: $color-grey;
+    color: #0384d0;
+    text-align: center;
+    border-bottom: none;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+}
+
+/*搜索*/
+.header-search {
+  @include layout;
+  border-radius: $header-search-radius;
+  overflow: hidden;
+  input {
+    height: $header-search-height;
+    width: $header-search-width;
+    font-size: $font-size-default;
+    border: 0;
+    text-indent: 10px;
+    //background-color: $color-light-grey;
+    background: rgb(77, 77, 77);
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .search-btn {
+    @include layout(center, center);
+    //background-color: $color-blue-active;
+    //background-color: #0384d0;
+    background-color: #585858;
+    width: $header-search-btn-width;
+    height: $header-search-btn-height;
+    cursor: pointer;
+    .icon {
+      @include icon(1.2em, $color-white);
+    }
+  }
+}
+
+/*用户*/
+.header-right {
+  position: relative;
+  @include layout(center, center);
+  #user {
+    overflow: hidden;
+    width: $header-user-width;
+    height: $header-user-height;
+    border-radius: $header-user-radius;
+    margin: $header-user-margin;
+    cursor: pointer;
+    img {
+      width: 100%;
+    }
+  }
+}
+
+.menu {
+  display: none;
+  line-height: 1px;
+  position: absolute;
+  //background-color: $color-white;
+  background-color: #bbbbbb;
+  // 菜单文字阴影
+  @include box-shadow(1px 1px 10px rgba(0, 0, 0, 0.6));
+  width: $header-menu-width;
+  padding: $header-menu-padding;
+  border-radius: $header-menu-radius;
+  top: $header-height + 10px;
+  right: -20px;
+  z-index: 5;
+  text-align: center;
+  cursor: pointer;
+
+  li {
+    display: inline-block;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+
+    &:hover {
+      // 歌单点击头颜色
+      // background-color: $theme-color;
+      background-color: rgba(119, 119, 119, 0.56);
+      // 歌单盒子颜色
+      color: $color-white;
+    }
+  }
+
+  :nth-child(1):before {
+    content: " ";
+    display: block; /*独占一行*/
+   // display: none;
+    position: absolute;
+    right: 45px;
+    top: -5px; /*果断的露出上半部分*/
+    width: 10px;
+    height: 10px;
+   // background-color: $color-white;
+    /*一个正方形倾斜四十五度就是三角了但是要把下半部分藏起来*/
+    transform: rotate(45deg);
+  }
+   :nth-child(1):hover:before {
+   //background-color: $theme-color;
+     background-color: rgba(39, 39, 39, 0.56);
+   }
+}
+
+.show {
+  display: block;
+}
+
+.active {
+  //color: $theme-color !important;
+  border-bottom: 5px solid $theme-color !important;
+  color: #e10d0d !important;
+  border-bottom: 5px solid #e10d0d !important;
+}
